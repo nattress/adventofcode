@@ -17,12 +17,6 @@ namespace _09
 
                 Console.WriteLine($"Total Score: {totalGroupScore}");
                 Console.WriteLine($"Total non-canceled garbage count: {garbageCount}");
-                // while(true)
-                // {
-                //     string line = tr.ReadLine();
-                //     if (string.IsNullOrEmpty(line))
-                //         break;
-                // }
             }
         }
 
