@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -9,11 +10,11 @@ namespace _20
     {
         class Point3D
         {
-            public int X {get;set;}
-            public int Y {get;set;}
-            public int Z {get;set;}
+            public long X {get;set;}
+            public long Y {get;set;}
+            public long Z {get;set;}
 
-            public Point3D(int x, int y, int z)
+            public Point3D(long x, long y, long z)
             {
                 X = x;
                 Y = y;
@@ -23,6 +24,25 @@ namespace _20
             public override string ToString()
             {
                 return $"<{X},{Y},{Z}>";
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is Point3D))
+                    return false;
+
+                Point3D other = obj as Point3D;
+                return X == other.X && Y == other.Y && Z == other.Z;
+            }
+
+            public static Point3D operator +(Point3D p1, Point3D p2)
+            {
+                return new Point3D(p1.X + p2.X, p1.Y + p2.Y, p1.Z + p2.Z);
+            }
+
+            public override int GetHashCode()
+            {
+                return (int)(X ^ 13 + Y ^ 29 + Z ^ 31);
             }
         }
 
@@ -75,6 +95,70 @@ namespace _20
 
                 DisplayClosestAfterTickCount(particles, 1000000);
 
+                // Part 2 - eliminate particles that collide.
+                // There might be a clever equation we can plug in like Part 1 but 
+                // the inaccuracy of floating math over large tick counts seems to
+                // be preventing collision detection.
+                // Let's step by tick, measure each position, add positions to hash
+                // and eliminate collisions
+                int tickCount = 0;
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                long lastReportedCollision = 0;
+                while (true)
+                {
+                    Dictionary<Point3D, List<int>> collisions = new Dictionary<Point3D, List<int>>();
+                    for (int i = 0; i < particles.Count; i++)
+                    {
+                        particles[i].Velocity += particles[i].Acceleration;
+                        particles[i].Position += particles[i].Velocity;
+                        var pos = particles[i].Position;
+                        
+                        if (collisions.ContainsKey(pos))
+                        {
+                            collisions[pos].Add(i);
+                        }
+                        else
+                        {
+                            collisions.Add(pos, new List<int>() {i});
+                        }
+                    }
+                    
+                    List<Particle> collidedParticles = new List<Particle>();
+                    // Report any collisions
+                    // Lordy this is going to be awful perf :)
+                    foreach (var x in collisions)
+                    {
+                        if (x.Value.Count > 1)
+                        {
+                            Console.WriteLine($"Tick {tickCount}: collisions at {x.Key.ToString()}:");
+                            // Collision
+                            foreach (var y in x.Value)
+                            {
+                                Console.WriteLine($"\t{particles[y].ToString()}");
+                                collidedParticles.Add(particles[y]);
+                            }
+                            lastReportedCollision = sw.ElapsedMilliseconds;
+                        }
+                    }
+
+                    // Remove collided particles by object from the particles list
+                    // since indexes will be shifting around. We could order the indices from 
+                    // highest to lowest and remove that way, too.
+                    foreach (var x in collidedParticles)
+                    {
+                        particles.Remove(x);
+                    }
+
+                    if (sw.ElapsedMilliseconds - lastReportedCollision > 10000)
+                    {
+                        // Every 10 seconds report our tick count
+                        Console.WriteLine($"Tick {tickCount}: remaining particles: {particles.Count}");
+                        lastReportedCollision = sw.ElapsedMilliseconds;
+                    }
+
+                    ++tickCount;
+                }
             }
         }
 
@@ -83,12 +167,17 @@ namespace _20
             var positions = ComputePositionsAfterTickCount(particles, timeInTicks, out int minIndex);
             
             Console.WriteLine($"Closest particle after {timeInTicks} ticks: {minIndex}. p={particles[minIndex].Position} Distance={positions[minIndex]}");
+        }
 
-            // positions.Sort();
-            // for (int i = 0; i < 10; i++)
-            // {
-            //     Console.WriteLine($"{positions[i]}");
-            // }
+        static Point3D PositionAfterTicks(Particle p, int timeInTicks)
+        {
+            var position = p.Position;
+            var velocity = p.Velocity;
+            var acceleration = p.Acceleration;
+            var posX = (double)position.X + (double)((double)velocity.X * (double)timeInTicks) + (double)(0.5f * (double)acceleration.X * Math.Pow(timeInTicks, 2));
+            var posY = (double)position.Y + (double)((double)velocity.Y * (double)timeInTicks) + (double)(0.5f * (double)acceleration.Y * Math.Pow(timeInTicks, 2));
+            var posZ = (double)position.Z + (double)((double)velocity.Z * (double)timeInTicks) + (double)(0.5f * (double)acceleration.Z * Math.Pow(timeInTicks, 2));
+            return new Point3D((long)posX, (long)posY, (long)posZ);
         }
 
         static List<double> ComputePositionsAfterTickCount(List<Particle> particles, int timeInTicks, out int minIndex)
@@ -98,14 +187,8 @@ namespace _20
             List<double> distancesFromOrigin = new List<double>();
             for (int i = 0; i < particles.Count; i++)
             {
-                var position = particles[i].Position;
-                var velocity = particles[i].Velocity;
-                var acceleration = particles[i].Acceleration;
-                var posX = position.X + (velocity.X * timeInTicks) + 0.5f * acceleration.X * Math.Pow(timeInTicks, 2);
-                var posY = position.Y + (velocity.Y * timeInTicks) + 0.5f * acceleration.Y * Math.Pow(timeInTicks, 2);
-                var posZ = position.Z + (velocity.Z * timeInTicks) + 0.5f * acceleration.Z * Math.Pow(timeInTicks, 2);
-
-                double manhattanDistance = Math.Abs(posX) + Math.Abs(posY) + Math.Abs(posZ);
+                var newPos = PositionAfterTicks(particles[i], timeInTicks);
+                double manhattanDistance = Math.Abs(newPos.X) + Math.Abs(newPos.Y) + Math.Abs(newPos.Z);
                 distancesFromOrigin.Add(manhattanDistance);
                 if (manhattanDistance < minManhattanDistance)
                 {
