@@ -7,6 +7,43 @@ namespace _16
 {
     class Program
     {
+        enum CommandType
+        {
+            Spin,
+            Exchange,
+            Partner
+        }
+
+        class Command{
+            public CommandType CommandType;
+            public int Arg0;
+            public int Arg1;
+            public char CharArg0;
+            public char CharArg1;
+
+            public Command(string command, string data)
+            {
+                if (command == "s")
+                {
+                    CommandType = CommandType.Spin;
+                    Arg0 = int.Parse(data);
+                }
+                else if (command == "x")
+                {
+                    CommandType = CommandType.Exchange;
+                    var x = data.Split("/");
+                    Arg0 = int.Parse(x[0]);
+                    Arg1 = int.Parse(x[1]);
+                }
+                else if (command == "p")
+                {
+                    CommandType = CommandType.Partner;
+                    var x = data.Split("/");
+                    CharArg0 = char.Parse(x[0]);
+                    CharArg1 = char.Parse(x[1]);
+                }
+            }
+        }
         static void Main(string[] args)
         {
             string input = File.ReadAllText(args[0]);
@@ -20,170 +57,105 @@ namespace _16
             {
                 dancerPosition[dancers[i]] = i;
             }
+
             Dictionary<char, int> originalDancerPositions = new Dictionary<char, int>(dancerPosition);
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            long lastReportedMs = 0;
-            
-            for (int ctr = 0; ctr < 1000000000; ctr++)
-            {
-                foreach (var m in moves)
-                {
-                    string command = m.Substring(0, 1);
-                    string data = m.Substring(1);
-                    if (command == "s")
-                    {
-                        int count = int.Parse(data);
-                        //
-                        // Copy last 'count' to temp buffer
-                        //
-                        char[] temp = new char[count];
-                        for (int i = dancers.Length - count, j = 0; i < dancers.Length; i++, j++)
-                        {
-                            temp[j] = dancers[i];
-                        }
-                        //
-                        // Move input buffer characters before 'count' to end
-                        //
-                        for (int i = dancers.Length - count - 1, j = dancers.Length - 1; i >= 0; i--, j--)
-                        {
-                            dancers[j] = dancers[i];
-                            dancerPosition[dancers[j]] = j;
-                        }
-                        //
-                        // Move temp buffer characters
-                        //
-                        for (int i = 0; i < temp.Length; i++)
-                        {
-                            dancers[i] = temp[i];
-                            dancerPosition[dancers[i]] = i;
-                        }
-                    }
-                    else if (command == "x")
-                    {
-                        var x = data.Split("/");
-                        int pos1 = int.Parse(x[0]);
-                        int pos2 = int.Parse(x[1]);
-                        char temp = dancers[pos1];
-                        dancers[pos1] = dancers[pos2];
-                        dancers[pos2] = temp;
-                        dancerPosition[dancers[pos1]] = pos1;
-                        dancerPosition[dancers[pos2]] = pos2;
-                    }
-                    else if (command == "p")
-                    {
-                        var x = data.Split("/");
-                        char char1 = char.Parse(x[0]);
-                        char char2 = char.Parse(x[1]);
-                        int pos1 = dancerPosition[char1];
-                        int pos2 = dancerPosition[char2];
-                        char temp = dancers[pos1];
-                        dancers[pos1] = dancers[pos2];
-                        dancers[pos2] = temp;
-                        dancerPosition[dancers[pos1]] = pos1;
-                        dancerPosition[dancers[pos2]] = pos2;
-                    }
-                }
-                Console.WriteLine($"Part 1: Dancers ended up as {string.Join("", dancers)}");
-            }
-
-            Console.WriteLine($"Part 1: Dancers ended up as {string.Join("", dancers)}");
-
+            List<Command> commands = new List<Command>();
             foreach (var m in moves)
             {
                 string command = m.Substring(0, 1);
                 string data = m.Substring(1);
-                if (command == "s")
-                {
-                    int count = int.Parse(data);
-                    //
-                    // Copy last 'count' to temp buffer
-                    //
-                    char[] temp = new char[count];
-                    for (int i = dancers.Length - count, j = 0; i < dancers.Length; i++, j++)
-                    {
-                        temp[j] = dancers[i];
-                    }
-                    //
-                    // Move input buffer characters before 'count' to end
-                    //
-                    for (int i = dancers.Length - count - 1, j = dancers.Length - 1; i >= 0; i--, j--)
-                    {
-                        dancers[j] = dancers[i];
-                        dancerPosition[dancers[j]] = j;
-                    }
-                    //
-                    // Move temp buffer characters
-                    //
-                    for (int i = 0; i < temp.Length; i++)
-                    {
-                        dancers[i] = temp[i];
-                        dancerPosition[dancers[i]] = i;
-                    }
-                }
-                else if (command == "x")
-                {
-                    var x = data.Split("/");
-                    int pos1 = int.Parse(x[0]);
-                    int pos2 = int.Parse(x[1]);
-                    char temp = dancers[pos1];
-                    dancers[pos1] = dancers[pos2];
-                    dancers[pos2] = temp;
-                    dancerPosition[dancers[pos1]] = pos1;
-                    dancerPosition[dancers[pos2]] = pos2;
-                }
-                else if (command == "p")
-                {
-                    var x = data.Split("/");
-                    char char1 = char.Parse(x[0]);
-                    char char2 = char.Parse(x[1]);
-                    int pos1 = dancerPosition[char1];
-                    int pos2 = dancerPosition[char2];
-                    char temp = dancers[pos1];
-                    dancers[pos1] = dancers[pos2];
-                    dancers[pos2] = temp;
-                    dancerPosition[dancers[pos1]] = pos1;
-                    dancerPosition[dancers[pos2]] = pos2;
-                }
+                commands.Add(new Command(command, data));
             }
-            //
-            // Part 2: Let's not run the full logic 1 BILLION times and
-            // instead compute a mapping from the input to output for each 
-            // character. Then run that 1 billion times, which should be
-            // much faster.
-            //
-            int[] translationArray = new int[dancers.Length];
-            for (int i = 0; i < dancers.Length; i++)
-            {
-                translationArray[i] = originalDancerPositions[dancers[i]];
-            }
-            
-            char[] tempArray = new char[dancers.Length];
-            for (int i = 1; i < 50; i++)
-            {
-                // Back up the current dancers array, then use the backup
-                // to perform the translation since the dancers array elements
-                // will be overwritten
-                for (int j = 0; j < dancers.Length; j++)
-                {
-                    tempArray[j] = dancers[j];
-                }
 
-                for (int j = 0; j < dancers.Length; j++)
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            long lastReportedMs = 0;
+            char[] temp = new char[dancers.Length];
+            List<string> previousPositions = new List<string>();
+            for (int ctr = 0; ctr < 1000000000; ctr++)
+            {
+                foreach (var c in commands)
                 {
-                    dancers[j] = tempArray[translationArray[j]];
+                    switch (c.CommandType)
+                    {
+                        case CommandType.Spin:
+                        {
+                            //
+                            // Copy last 'count' to temp buffer
+                            //
+                            int count = c.Arg0;
+                            for (int i = dancers.Length - count, j = 0; i < dancers.Length; i++, j++)
+                            {
+                                temp[j] = dancers[i];
+                            }
+                            //
+                            // Move input buffer characters before 'count' to end
+                            //
+                            for (int i = dancers.Length - count - 1, j = dancers.Length - 1; i >= 0; i--, j--)
+                            {
+                                dancers[j] = dancers[i];
+                                dancerPosition[dancers[j]] = j;
+                            }
+                            //
+                            // Move temp buffer characters
+                            //
+                            for (int i = 0; i < count; i++)
+                            {
+                                dancers[i] = temp[i];
+                                dancerPosition[dancers[i]] = i;
+                            }
+                            break;
+                        }
+                        case CommandType.Exchange:
+                        {
+                            int pos1 = c.Arg0;
+                            int pos2 = c.Arg1;
+                            char temp2 = dancers[pos1];
+                            dancers[pos1] = dancers[pos2];
+                            dancers[pos2] = temp2;
+                            dancerPosition[dancers[pos1]] = pos1;
+                            dancerPosition[dancers[pos2]] = pos2;
+                            break;
+                        }
+                        case CommandType.Partner:
+                        {
+                            char char1 = c.CharArg0;
+                            char char2 = c.CharArg1;
+                            int pos1 = dancerPosition[char1];
+                            int pos2 = dancerPosition[char2];
+                            char temp3 = dancers[pos1];
+                            dancers[pos1] = dancers[pos2];
+                            dancers[pos2] = temp3;
+                            dancerPosition[dancers[pos1]] = pos1;
+                            dancerPosition[dancers[pos2]] = pos2;
+                            break;
+                        }
+                    }
+                }
+                
+                if (previousPositions.Contains(string.Join("", dancers)))
+                {
+                    Console.WriteLine($"Found a repetition after {ctr} repetitions");
+                    break;
+                }
+                else
+                {
+                    previousPositions.Add(string.Join("", dancers));
+                }
+                
+                if (ctr == 0)
+                {
+                    Console.WriteLine($"Part 1: Dancers ended up as {string.Join("", dancers)}");
                 }
 
                 if (sw.ElapsedMilliseconds - lastReportedMs > 10000)
                 {
+                    Console.WriteLine($"{(double)((double)ctr / 1000000000.0f) * 100.0}% - {ctr} / 1000000000");
                     lastReportedMs = sw.ElapsedMilliseconds;
-                    Console.WriteLine($"{i} / 1000000000 after {sw.ElapsedMilliseconds}ms");
                 }
-                Console.WriteLine($"Part 2: Dancers ended up as {string.Join("", dancers)}");
             }
 
-            Console.WriteLine($"Part 2: Dancers ended up as {string.Join("", dancers)}");
+            Console.WriteLine($"Part 2: Dancers ended up as {previousPositions[(1000000000 % 60) - 1]}");
         }
     }
 }
