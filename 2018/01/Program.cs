@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace _01
+namespace AdventOfCode
 {
-    class Program
+    public class Day01
     {
         static void Main(string[] args)
         {
             var numberList = new List<int>();
 
-            using (TextReader tr = File.OpenText("input.txt"))
+            using (TextReader tr = File.OpenText(args[0]))
             {
                 string line = "";
                 
@@ -24,11 +24,14 @@ namespace _01
                 }
             }
 
-            Part1(numberList);
-            Part2(numberList);
+            int part1 = Part1(numberList);
+            int part2 = Part2(numberList);
+
+            Console.WriteLine($"Part One: Final frequency {part1}");
+            Console.WriteLine($"Part Two: Saw frequency {part2} twice.");
         }
 
-        static void Part1(IList<int> numberList)
+        public static int Part1(IList<int> numberList)
         {
             int frequency = 0;
 
@@ -37,13 +40,14 @@ namespace _01
                 frequency += i;
             }
 
-            Console.WriteLine($"Part One: Final frequency {frequency}");
+            return frequency;
         }
 
-        static void Part2(IList<int> numberList)
+        public static int Part2(IList<int> numberList)
         {
             var seen = new HashSet<int>();
             int frequency = 0;
+
             for (;;)
             {
                 foreach (var i in numberList)
@@ -51,8 +55,7 @@ namespace _01
                     frequency += i;
                     if (seen.Contains(frequency))
                     {
-                        Console.WriteLine($"Part Two: Saw frequency {frequency} twice.");
-                        return;
+                        return frequency;
                     }
                     seen.Add(frequency);
                 }

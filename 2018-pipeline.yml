@@ -1,0 +1,9 @@
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: RunTests@1
+  inputs:
+    command: test
+    projects: '2018/tests/tests.csproj'
+    arguments: '--configuration $(buildConfiguration)'
