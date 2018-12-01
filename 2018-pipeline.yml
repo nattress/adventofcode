@@ -2,8 +2,9 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: RunTests@1
+- script: dotnet test '2018/tests/tests.csproj' --configuration $(buildConfiguration) --logger trx
+
+- task: PublishTestResults@1
   inputs:
-    command: test
-    projects: '2018/tests/tests.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    testResultsFormat: 'xUnit'
+    testResultsFiles: '**/*.trx'
