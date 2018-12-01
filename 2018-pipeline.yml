@@ -6,5 +6,5 @@ steps:
 
 - task: PublishTestResults@1
   inputs:
-    testResultsFormat: 'xUnit'
+    testResultsFormat: 'VSTest'
     testResultsFiles: '**/*.trx'
