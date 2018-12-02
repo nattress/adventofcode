@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\01\01.csproj" />
+    <ProjectReference Include="..\02\02.csproj" />
     
     <Content Include="..\input\*.txt" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>

@@ -27,6 +27,24 @@ namespace AdventOfCode
             Assert.Equal(56360, result);
         }
 
+        [Fact]
+        public void Day02Part1()
+        {
+            List<string> boxList = new List<string>();
+            ReadFile(TestInputFileFromDay(2), x => boxList.Add(x));
+            var result = Day02.Part1(boxList);
+            Assert.Equal(7192, result);
+        }
+
+        [Fact]
+        public void Day02Part2()
+        {
+            List<string> boxList = new List<string>();
+            ReadFile(TestInputFileFromDay(2), x => boxList.Add(x));
+            var result = Day02.Part2(boxList);
+            Assert.Equal("mbruvapghxlzycbhmfqjonsie", result);
+        }
+
         private string TestInputFileFromDay(int day)
         {
             var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
