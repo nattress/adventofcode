@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Xunit;
 
 namespace AdventOfCode
@@ -43,6 +44,52 @@ namespace AdventOfCode
             ReadFile(TestInputFileFromDay(2), x => boxList.Add(x));
             var result = Day02.Part2(boxList);
             Assert.Equal("mbruvapghxlzycbhmfqjonsie", result);
+        }
+
+        [Fact]
+        public void Day03Part1()
+        {
+            List<Claim> claimList = new List<Claim>();
+            ReadFile(TestInputFileFromDay(3), line => 
+            {
+                Regex pattern = new Regex(@"#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)");
+                MatchCollection matches = pattern.Matches(line);
+                foreach (Match thisMatch in matches)
+                {
+                    int id = int.Parse(thisMatch.Groups[1].Value);
+                    int left = int.Parse(thisMatch.Groups[2].Value);
+                    int top = int.Parse(thisMatch.Groups[3].Value);
+                    int width = int.Parse(thisMatch.Groups[4].Value);
+                    int height = int.Parse(thisMatch.Groups[5].Value);
+
+                    claimList.Add(new Claim(id, left, top, width, height));
+                }
+            });
+            var result = Day03.Part1(claimList);
+            Assert.Equal(118539, result);
+        }
+
+        [Fact]
+        public void Day03Part2()
+        {
+            List<Claim> claimList = new List<Claim>();
+            ReadFile(TestInputFileFromDay(3), line => 
+            {
+                Regex pattern = new Regex(@"#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)");
+                MatchCollection matches = pattern.Matches(line);
+                foreach (Match thisMatch in matches)
+                {
+                    int id = int.Parse(thisMatch.Groups[1].Value);
+                    int left = int.Parse(thisMatch.Groups[2].Value);
+                    int top = int.Parse(thisMatch.Groups[3].Value);
+                    int width = int.Parse(thisMatch.Groups[4].Value);
+                    int height = int.Parse(thisMatch.Groups[5].Value);
+
+                    claimList.Add(new Claim(id, left, top, width, height));
+                }
+            });
+            var result = Day03.Part2(claimList);
+            Assert.Equal(1270, result);
         }
 
         private string TestInputFileFromDay(int day)
