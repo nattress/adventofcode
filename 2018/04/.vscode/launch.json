@@ -9,11 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/04/bin/Debug/netcoreapp2.1/04.dll",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp2.1/04.dll",
             "args": ["H:\\git\\adventofcode\\2018\\input\\04_input.txt"],
-            "cwd": "${workspaceFolder}/04",
-            // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+            "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"
@@ -24,5 +22,5 @@
             "request": "attach",
             "processId": "${command:pickProcess}"
         }
-    ,]
+    ]
 }

@@ -92,6 +92,32 @@ namespace AdventOfCode
             Assert.Equal(1270, result);
         }
 
+        [Fact]
+        public void Day04Part1()
+        {
+            List<ShiftEntry> shifts = new List<ShiftEntry>();
+            ReadFile(TestInputFileFromDay(4), line => 
+            {
+                shifts.Add(Day04.EntryFromInputLine(line));
+            });
+            Day04.OrganizeShifts(shifts);
+            var result = Day04.Part1(shifts);
+            Assert.Equal(71748, result);
+        }
+
+        [Fact]
+        public void Day04Part2()
+        {
+            List<ShiftEntry> shifts = new List<ShiftEntry>();
+            ReadFile(TestInputFileFromDay(4), line => 
+            {
+                shifts.Add(Day04.EntryFromInputLine(line));
+            });
+            Day04.OrganizeShifts(shifts);
+            var result = Day04.Part2(shifts);
+            Assert.Equal(106850, result);
+        }
+
         private string TestInputFileFromDay(int day)
         {
             var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
