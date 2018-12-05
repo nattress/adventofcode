@@ -118,6 +118,30 @@ namespace AdventOfCode
             Assert.Equal(106850, result);
         }
 
+        [Fact]
+        public void Day05Part1()
+        {
+            string input = "";
+            ReadFile(TestInputFileFromDay(5), line => 
+            {
+                input = line;
+            });
+            var result = Day05.Part1(input);
+            Assert.Equal(10766, result);
+        }
+
+        [Fact]
+        public void Day05Part2()
+        {
+            string input = "";
+            ReadFile(TestInputFileFromDay(5), line => 
+            {
+                input = line;
+            });
+            var result = Day05.Part2(input);
+            Assert.Equal(6538, result);
+        }
+
         private string TestInputFileFromDay(int day)
         {
             var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

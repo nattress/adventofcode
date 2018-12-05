@@ -18,6 +18,7 @@
     <ProjectReference Include="..\02\02.csproj" />
     <ProjectReference Include="..\03\03.csproj" />
     <ProjectReference Include="..\04\04.csproj" />
+    <ProjectReference Include="..\05\05.csproj" />
     
     <Content Include="..\input\*.txt" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
