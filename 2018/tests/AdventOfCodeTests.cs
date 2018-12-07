@@ -142,6 +142,32 @@ namespace AdventOfCode
             Assert.Equal(6538, result);
         }
 
+        [Fact]
+        public void Day06Part1()
+        {
+            var coords = new List<Coordinate>();
+            ReadFile(TestInputFileFromDay(6), line => 
+            {
+                var split = line.Split(new[] {',', ' '});
+                coords.Add(new Coordinate(int.Parse(split[0]), int.Parse(split[2])));
+            });
+            var result = Day06.Part1(coords);
+            Assert.Equal(3293, result);
+        }
+
+        [Fact]
+        public void Day06Part2()
+        {
+            var coords = new List<Coordinate>();
+            ReadFile(TestInputFileFromDay(6), line => 
+            {
+                var split = line.Split(new[] {',', ' '});
+                coords.Add(new Coordinate(int.Parse(split[0]), int.Parse(split[2])));
+            });
+            var result = Day06.Part2(coords);
+            Assert.Equal(45176, result);
+        }
+
         private string TestInputFileFromDay(int day)
         {
             var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
