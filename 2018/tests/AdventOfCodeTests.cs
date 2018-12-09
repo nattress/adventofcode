@@ -168,6 +168,30 @@ namespace AdventOfCode
             Assert.Equal(45176, result);
         }
 
+        [Fact]
+        public void Day07Part1()
+        {
+            var steps = new List<StepRequirement>();
+            ReadFile(TestInputFileFromDay(7), line => 
+            {
+                steps.Add(Day07.EntryFromInput(line));
+            });
+            var result = Day07.Part1(steps);
+            Assert.Equal("FMOXCDGJRAUIHKNYZTESWLPBQV", result);
+        }
+
+        [Fact]
+        public void Day07Part2()
+        {
+            var steps = new List<StepRequirement>();
+            ReadFile(TestInputFileFromDay(7), line => 
+            {
+                steps.Add(Day07.EntryFromInput(line));
+            });
+            var result = Day07.Part2(steps);
+            Assert.Equal(1053, result);
+        }
+
         private string TestInputFileFromDay(int day)
         {
             var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
