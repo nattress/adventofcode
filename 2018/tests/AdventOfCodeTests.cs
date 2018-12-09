@@ -216,6 +216,58 @@ namespace AdventOfCode
             Assert.Equal(22633, result);
         }
 
+        [Fact]
+        public void Day09Part1()
+        {
+            int playerCount = 0;
+            int lastMarbleValue = 0;
+
+            ReadFile(TestInputFileFromDay(9), line => 
+            {
+                Regex pattern = new Regex(@"([0-9]+) players; last marble is worth ([0-9]+) points");
+                MatchCollection matches = pattern.Matches(line);
+                foreach (Match thisMatch in matches)
+                {
+                    playerCount = int.Parse(thisMatch.Groups[1].Value);
+                    lastMarbleValue  = int.Parse(thisMatch.Groups[2].Value);
+                }
+            });
+            var result = Day09.Part1(playerCount, lastMarbleValue);
+            Assert.Equal(405143, result);
+        }
+
+        [Fact]
+        public void Day09Part2()
+        {
+            int playerCount = 0;
+            int lastMarbleValue = 0;
+
+            ReadFile(TestInputFileFromDay(9), line => 
+            {
+                Regex pattern = new Regex(@"([0-9]+) players; last marble is worth ([0-9]+) points");
+                MatchCollection matches = pattern.Matches(line);
+                foreach (Match thisMatch in matches)
+                {
+                    playerCount = int.Parse(thisMatch.Groups[1].Value);
+                    lastMarbleValue  = int.Parse(thisMatch.Groups[2].Value);
+                }
+            });
+            var result = Day09.Part2(playerCount, lastMarbleValue * 100);
+            Assert.Equal(3411514667, result);
+        }
+
+        [Theory]
+        [InlineData(10, 1618, 8317)]
+        [InlineData(13, 7999, 146373)]
+        [InlineData(17, 1104, 2764)]
+        [InlineData(21, 6111, 54718)]
+        [InlineData(30, 5807, 37305)]
+        public void Day09Samples(int playerCount, int lastMarbleValue, int expected)
+        {
+            var result = Day09.Part1(playerCount, lastMarbleValue);
+            Assert.Equal(expected, result);
+        }
+
         private string TestInputFileFromDay(int day)
         {
             var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
