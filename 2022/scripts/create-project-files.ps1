@@ -6,7 +6,7 @@ $currentYearSourceRoot = $PSScriptRoot | Split-Path -Parent
 
 Write-Output "Creating projects under $currentYearSourceRoot"
 
-for ($i = 1; $i -lt 26; $i++)
+for ($i = 6; $i -lt 26; $i++)
 {
     $dayFolder = $i.ToString().PadLeft(2, '0');
     $daySourceRoot = Join-Path -Path $currentYearSourceRoot -ChildPath $dayFolder
