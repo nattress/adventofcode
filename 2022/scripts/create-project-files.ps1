@@ -17,7 +17,9 @@ for ($i = 1; $i -lt 26; $i++)
     dotnet new console
 
     $templateProgram = Join-Path -Path $currentYearSourceRoot -ChildPath "Program.cs"
+    $templateInput = Join-Path -Path $currentYearSourceRoot -ChildPath "input_01.txt"
     Copy-Item -Path $templateProgram -Destination $daySourceRoot -Force
+    Copy-Item -Path $templateInput -Destination $daySourceRoot -Force
 
     Set-Location $PSScriptRoot
 }
