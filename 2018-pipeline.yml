@@ -2,7 +2,7 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet test 2018\tests\tests.csproj --configuration $(buildConfiguration) --logger trx
+- script: dotnet test 2018\\tests\\tests.csproj --configuration $(buildConfiguration) --logger trx
 
 - task: PublishTestResults@2
   inputs:
